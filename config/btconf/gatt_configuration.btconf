@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Custom BLE GATT-->
+<gatt gatt_caching="true" generic_attribute_service="true" header="gatt_db.h" name="Custom BLE GATT" out="gatt_db.c" prefix="gattdb_">
+
+  <!--Generic Access-->
+  <service advertise="false" name="Generic Access" requirement="mandatory" sourceId="org.bluetooth.service.generic_access" type="primary" uuid="1800">
+    <informativeText>Abstract: The generic_access service contains generic information about the device. All available Characteristics are readonly. </informativeText>
+
+    <!--Device Name-->
+    <characteristic const="false" id="device_name" name="Device Name" sourceId="org.bluetooth.characteristic.gap.device_name" uuid="2A00">
+      <value length="11" type="utf-8" variable_length="false">ConnDev0000</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <write authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+  </service>
+
+  <!--DataService-->
+  <service advertise="true" id="DataService" name="DataService" requirement="mandatory" sourceId="" type="primary" uuid="CCCC">
+
+    <!--Data_TX-->
+    <characteristic const="false" id="Data_TX" name="Data_TX" sourceId="" uuid="3a4855f6-2f9c-4005-815b-df746358668e">
+      <description>Data_TX</description>
+      <value length="64" type="hex" variable_length="false">00</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+
+    <!--Data_RX-->
+    <characteristic const="false" id="Data_RX" name="Data_RX" sourceId="" uuid="c165393c-f337-4efd-8c83-96226d85de6e">
+      <description>Data_RX</description>
+      <value length="6" type="hex" variable_length="false">0102030405</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <write_no_response authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+
+    <!--Text-->
+    <characteristic const="false" id="Text" name="Text" sourceId="" uuid="b3827d2f-c86c-46b6-9fa3-12e64d7be05d">
+      <description>Text</description>
+      <value length="255" type="hex" variable_length="false">00</value>
+      <properties>
+        <notify authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+  </service>
+</gatt>
