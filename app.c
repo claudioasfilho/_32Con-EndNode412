@@ -156,6 +156,8 @@ uint8_t connection_MTU;
 uint16_t myTextsize;
 volatile int16_t offset = 0;
 
+volatile uint16_t offset_log[60];
+
 uint16_t payload_sent_len;
 //static uint8_t payload[PAYLOAD_LENGTH] = {2};
 
@@ -165,6 +167,7 @@ uint16_t payload_sent_len;
 SL_WEAK void app_init(void)
 {
   myTextsize = sizeof(myText);
+  myTextsize = myTextsize>>2;
 
   app_log("The size of the file is: %d \n\n\n\n",myTextsize );
 
@@ -178,6 +181,8 @@ SL_WEAK void app_process_action(void)
 
   sl_status_t sc;
 
+  static uint8_t i = 0;
+
 
 
    if (( Notification_enabled == 1)&&(sl_bt_event_pending()==false)&&(Finished_TX == 0))
@@ -187,6 +192,7 @@ SL_WEAK void app_process_action(void)
              {
 
            app_log("Transmitting \n\r");
+          offset_log[i++]=offset;
           do {
                sc = sl_bt_gatt_server_send_notification(1, gattdb_Text,
                                                  connection_MTU-5,
@@ -197,15 +203,20 @@ SL_WEAK void app_process_action(void)
 //               if (offset >= myTextsize) break;
 //              offset+= connection_MTU-5;
 
-               if (sc != SL_STATUS_NO_MORE_RESOURCE)
-               {
-                   app_assert_status(sc);
-               }
+//               if (sc != SL_STATUS_NO_MORE_RESOURCE)
+//               {
+//                   app_assert_status(sc);
+//               }
 
                if(sc ==0){
                       if (offset >= myTextsize) {
-                          app_log("Finished Transmitting\n\r");
+                          app_log("Finished Transmitting %d\n\r", i);
                           Finished_TX = 1;
+                          for(int ii=0; ii<i;ii++)
+                            {
+                              app_log("%d \r\n", offset_log[ii]);
+                            }
+
                           break;
                       }
                              offset+= connection_MTU-5;
@@ -214,6 +225,7 @@ SL_WEAK void app_process_action(void)
 
              }
              while(sc == 0);
+
 
              }
 
@@ -275,7 +287,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
   sl_status_t sc;
   bd_addr address;
   uint8_t address_type;
-  uint8_t Dev_name[11] = "ConnDev0000";
+  uint8_t Dev_name[11] = "PerDev0000";
 
 
   //app_log("event: %x \n\r", SL_BT_MSG_ID(evt->header));
@@ -386,6 +398,14 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
       break;
 
+    case sl_bt_evt_connection_parameters_id:
+
+      app_log("Connection interval set %d \n\r",evt->data.evt_connection_parameters.interval);
+      app_log("Connection Latency set %d \n\r",evt->data.evt_connection_parameters.latency);
+      app_log("Connection Timeout set %d \n\r",evt->data.evt_connection_parameters.timeout);
+
+
+      break;
 
 
     case sl_bt_evt_gatt_procedure_completed_id:
