@@ -1,24 +1,17 @@
 # SoC - bt_AM_Conn_EN
 
-The Bluetooth example has a custom service and two Custom Characteristics. 
+The Bluetooth example has a custom service and three Custom Characteristics. 
 
-It advertises as **"ConnDev****"**, where the last 4 digits are the two last bytes of the device Mac Address.
+It advertises as **"PeriDevxxxx"**, where the last 4 digits are the two last bytes of the device Mac Address.
 
-It is meant to be used in conjuction to Central device: https://github.com/claudioasfilho/Central_AM 
+It is meant to be used in conjuction to Central device: https://github.com/claudioasfilho/conn_interval_central_CI 
 
-The Central device writes without response to Data_RX and the Peripheral device writes without response to Central characteristic "AABB".
+The Central device scans and connects to up to 32 peripheral devices which advertise a specific service "CCCC".
 
-The Data Held on Data_TX, and also send back to Central has 64 bytes and carries the following information:
+Once it finds the device, it will subscribe to notifications.
 
-**000013DB** FFFF **A79F0052** FFFF **842E1431CB0F** FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+By Pressing PB0 it will start the test, where the Peripheral nodes will send a send a substantial amount of data and after the TEST_TIMEOUT runs out, the Central device will printout on the UART a report showing how much data was received from each connected node and its Upstream throughput.
 
-Bytes 0-3: Counter showing number of 10ms ticks since the start of the connection with Central device         
-
-Byte 6: TX_counter, the number of successfully transmitted packets since reset
-Byte 7: RX_Counter, the number of successfully received packets since reset
-Byte 8: CRCERR_counter, the number of received packets with CRC errors since reset
-Byte 9: FAIL_counter, the number of radio failures, such as aborted TX/RX packets, scheduling failures, and so on. since reset
-Details for those 4 registers can be found at: https://docs.silabs.com/bluetooth/4.0/a00028#ga6a5b4be087b9cfe14368a848a4414cef 
 
 Bytes 12-17: Device Mac Address
 
@@ -28,6 +21,8 @@ Bytes 12-17: Device Mac Address
                     Properties: Read - 64 bytes
       |_ Data_RX -  UUID: C165393CF3374EFD8C8396226D85DE6E
                     Properties: Read/Write no Response - 5 bytes
+      |_ Data_RX -  UUID: b3827d2fc86c46b69fa312e64d7be05d
+                    Properties: Notify - 255 bytes
 
 **Other details:**
 
