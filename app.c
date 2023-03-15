@@ -287,7 +287,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
   sl_status_t sc;
   bd_addr address;
   uint8_t address_type;
-  uint8_t Dev_name[11] = "PerDev0000";
+  uint8_t Dev_name[11] = "PeriDev0000";
 
 
   //app_log("event: %x \n\r", SL_BT_MSG_ID(evt->header));
